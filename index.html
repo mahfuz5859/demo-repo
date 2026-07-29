@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Creat By Mahfuz </title>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        #bgVideo {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+        .content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        h2 {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            font-family: 'Georgia', serif;
+            letter-spacing: 2px;
+            color: white;
+            animation: fadeIn 2s ease-in-out;
+            text-shadow: 0 0 10px #ff4081,
+                         0 0 20px #ff4081,
+                         0 0 30px #ff4081;
+        }
+        .inputBox {
+            position: relative;
+            display: inline-block;
+        }
+        .inputBox input {
+            padding: 12px 15px;
+            border-radius: 25px;
+            font-size: 16px;
+            width: 280px;
+            text-align: center;
+            background: rgba(255,255,255,0.9);
+            color: #333;
+            outline: none;
+            border: 3px solid transparent;
+        }
+        .inputBox::before {
+            content: "";
+            position: absolute;
+            top: -3px; left: -3px; right: -3px; bottom: -3px;
+            border-radius: 25px;
+            background: linear-gradient(270deg, #ff4081, #e91e63, #ff0000, #ff9800, #4caf50, violet);
+            background-size: 600% 600%;
+            z-index: -1;
+            animation: rotateBorder 6s linear infinite;
+        }
+        @keyframes rotateBorder {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        #message {
+            display: none;
+            font-size: 30px;
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: center;
+            font-family: 'Lexend', sans-serif;
+            background: linear-gradient(270deg, red, orange, yellow, green, violet);
+            background-size: 800% 800%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: rainbowWave 10s ease infinite;
+            white-space: pre-line;
+        }
+        @keyframes rainbowWave {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        button {
+            padding: 12px 25px;
+            margin-top: 20px;
+            border-radius: 25px;
+            border: none;
+            font-size: 16px;
+            background: linear-gradient(45deg, navy, #000080);
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+            animation: bounce 2s infinite;
+        }
+        button:hover {
+            transform: scale(1.1);
+            background: linear-gradient(45deg, #000080, navy);
+        }
+        #videoSection {
+            display: none;
+            margin-top: 20px;
+            opacity: 0;
+        }
+        #videoSection.fade-in {
+            animation: fadeVideo 3s ease forwards;
+        }
+        @keyframes fadeVideo {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+        @keyframes bounce {
+            0%, 100% {transform: translateY(0);}
+            50% {transform: translateY(-5px);}
+        }
+    </style>
+</head>
+<body>
+    <!-- Background video -->
+    <video autoplay muted loop id="bgVideo">
+        <source src="frist video background.mp4" type="video/mp4">
+    </video>
+
+    <div class="content">
+        <h2>Enter Your Name</h2>
+        <div class="inputBox">
+            <input type="text" id="nameInput" placeholder="Type your name">
+        </div>
+        <button onclick="showMessage()">Enter</button>
+
+        <div id="message"></div>
+
+        <div id="videoSection">
+            <video id="birthdayVideo" width="400" controls playsinline>
+                <source src="Main H.mp4" type="video/mp4">
+            </video>
+        </div>
+    </div>
+
+    <!-- Background music -->
+    <audio id="bgMusic" src="music.mp3" preload="auto" loop></audio>
+
+    <script>
+        // Background music auto play
+        document.addEventListener("DOMContentLoaded", function() {
+            let bgMusic = document.getElementById("bgMusic");
+            bgMusic.volume = 0.2;
+            bgMusic.play().catch(err => {
+                console.log("Autoplay blocked:", err);
+            });
+        });
+
+        // Fullscreen fallback function
+        function makeFullscreen(element) {
+            if (element.requestFullscreen) {
+                element.requestFullscreen();
+            } else if (element.webkitRequestFullscreen) {
+                element.webkitRequestFullscreen();
+            } else if (element.msRequestFullscreen) {
+                element.msRequestFullscreen();
+            } else if (element.webkitEnterFullscreen) {
+                element.webkitEnterFullscreen(); // iOS Safari
+            }
+        }
+
+        function showMessage() {
+            let name = document.getElementById("nameInput").value;
+            if(name.trim() !== "") {
+                let messageDiv = document.getElementById("message");
+                messageDiv.style.display = "block";
+
+                let fullMessage = "🎉 Happy Birthday, " + name + 
+                    " 🎉\nMay your birthday be the beginning of another year filled with happiness, success, good health, and unforgettable moments.\nHappy Birthday 🎂";
+                
+                let i = 0;
+                messageDiv.innerHTML = "";
+
+                let interval = setInterval(() => {
+                    messageDiv.innerHTML += fullMessage.charAt(i);
+                    i++;
+                    if(i >= fullMessage.length) {
+                        clearInterval(interval);
+                        setTimeout(playVideo, 4000);
+                    }
+                }, 100);
+
+                // Enter ক্লিকের সময় fullscreen request
+                let video = document.getElementById("birthdayVideo");
+                makeFullscreen(video);
+            } else {
+                alert("Please enter your name!");
+            }
+        }
+
+        function playVideo() {
+            let videoSection = document.getElementById("videoSection");
+            let video = document.getElementById("birthdayVideo");
+            let bgMusic = document.getElementById("bgMusic");
+
+            videoSection.style.display = "block";
+            videoSection.classList.add("fade-in");
+            video.volume = 0.55;
+            video.play();
+
+            // ভিডিও চালু হলে background music বন্ধ হবে
+            bgMusic.pause();
+            bgMusic.currentTime = 0;
+        }
+    </script>
+</body>
+</html>
